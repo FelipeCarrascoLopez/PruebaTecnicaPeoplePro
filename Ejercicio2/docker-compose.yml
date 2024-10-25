@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_libros
+    environment:
+      POSTGRES_USER: fcarrasco
+      POSTGRES_PASSWORD: 1243
+      POSTGRES_DB: libros_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: always

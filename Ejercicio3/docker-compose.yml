@@ -1,0 +1,37 @@
+version: "3"
+services:
+  postgres_db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: erp_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./etl_service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432"
+    networks:
+      - db_network
+
+  etl_service:
+    build: ./etl_service
+    depends_on:
+      - postgres_db
+    networks:
+      - db_network
+    volumes:
+      - ./etl_service:/app  # Puedes cambiar esto si no deseas usar 'app'
+    environment:
+      DB_NAME: erp_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+
+networks:
+  db_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
